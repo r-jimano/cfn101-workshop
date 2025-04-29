@@ -22,6 +22,10 @@ Resources:
       Role: !GetAtt FunctionExecutionRole.Arn
       Handler: index.handler
       ## Environment Configuration Goes Here
+      Environment:
+        Variables:
+          RDS_HOSTNAME: '{{resolve:secretsmanager:DatabaseConnParams:SecretString:RDS_HOSTNAME}}'
+          RDS_PORT: '{{resolve:secretsmanager:DatabaseConnParams:SecretString:RDS_PORT}}'
       Runtime: python3.9
       Code:
         ZipFile: |
