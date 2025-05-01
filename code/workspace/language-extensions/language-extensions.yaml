@@ -1,5 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
+Transform: AWS::LanguageExtensions
+
 Description: AWS CloudFormation workshop - Language extensions (uksb-1q9p31idr) (tag:language-extensions).
 
 Parameters:
@@ -8,8 +10,22 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
 
+# https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/function-refs-in-policy-attributes.html
+# PolicyはLanguageExtensionsを宣言しなくても使えるようになったらしい
+  DeletionPolicyParameter:
+    Type: String
+    AllowedValues: [Delete, Retain]
+    Default: Delete
+
+  UpdateReplaceParameter:
+    Type: String
+    AllowedValues: [Delete, Retain, Snapshot]
+    Default: Delete
+
 Resources:
   EC2Instance:
+    DeletionPolicy: !Ref DeletionPolicyParameter
+    UpdateReplacePolicy: !Ref UpdateReplaceParameter
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref LatestAmiId
@@ -17,6 +33,26 @@ Resources:
       Tags:
         - Key: Environment
           Value: DEV
+  Dashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      # 言語拡張を使用してJSON オブジェクトを指定
+      DashboardBody:
+        Fn::ToJsonString:
+          start: -PT6H
+          periodOverride: inherit
+          widgets:
+            - type: metric
+              x: 0
+              "y": 7
+              width: 3
+              height: 3
+              properties:
+                metrics: [[AWS/EC2, CPUUtilization, InstanceId, !Ref EC2Instance]]
+                period: 300
+                stat: Average
+                region: !Ref AWS::Region
+                title: EC2 Instance CPU
 
 Outputs:
   InstanceId:
