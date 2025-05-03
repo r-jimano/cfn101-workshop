@@ -28,3 +28,4 @@ Resources:
       SecurityGroupIds:
         - !ImportValue AWS-CloudFormationWorkshop-SecurityGroupId
       InstanceType: !Ref InstanceType
+      SubnetId: !ImportValue AWS-CloudFormationWorkshop-SubnetId1

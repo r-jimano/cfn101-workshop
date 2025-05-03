@@ -9,3 +9,31 @@ Metadata:
         - W3011
 
 # Add your code here!
+# Parameters:
+#   LatestAmiId:
+#     Description: Fetching the latest AMI ID for Amazon Linux
+#     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+#     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+#   InstanceType:
+#     Description: Select the type of the EC2 instance.
+#     Type: String
+#     AllowedValues:
+#       - t2.nano
+#       - t2.micro
+#       - t2.small
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+  # スタックの管理範囲外でインスタンスタイプを変更しちゃったので、
+  # DeletionPolicy: Retainを設定追加して更新してから削除する。
+  # その後、スタックにリソースをインポート する。
+  # Instance:
+  #   DeletionPolicy: Retain
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     ImageId: !Ref LatestAmiId
+  #     InstanceType: !Ref InstanceType
+  #     Tags:
+  #       - Key: Name
+  #         Value: InstanceImport

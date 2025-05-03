@@ -24,3 +24,4 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Ref MyQueueName
+      MessageRetentionPeriod: 345600

@@ -3,3 +3,27 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: AWS CloudFormation workshop - drift detection challenge (uksb-1q9p31idr) (tag:drift-detection).
 
 # Add your code here!
+Parameters:
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  # スタックの管理範囲外でUserDataを変更しちゃったので、
+  # DeletionPolicy: Retainを設定追加して更新してからコメントアウト->削除する。
+  # その後、UserDataの変更をテンプレートに反映してコメントアウトをもとに戻して、スタックにインポートしなおす。
+  Instance1:
+    DeletionPolicy: Retain
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: t2.micro
+      # UserData: !Base64 |
+      #   #!/usr/bin/env bash
+      #   echo Hello World
+      UserData: !Base64 |
+        #!/usr/bin/env bash
+        echo Hello Universe
+
+  Bucket1:
+    Type: AWS::S3::Bucket

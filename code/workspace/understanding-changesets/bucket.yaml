@@ -13,5 +13,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: !Ref BucketName # Update requires: Replacement
       # add the code snippet here
+      VersioningConfiguration:
+        Status: Enabled # Update requires: No interruption
